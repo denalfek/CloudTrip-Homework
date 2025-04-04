@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "cloudtrip.homework.client\\cloudtrip.homework.client.esproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "CloudTrip.Homework.Server\\CloudTrip.Homework.Server.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

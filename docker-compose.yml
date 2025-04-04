@@ -1,0 +1,17 @@
+services:
+  # cloudtrip.homework.web:
+  #   container_name: cloudtrip-homework-web
+  #   build:
+  #     context: .
+  #     dockerfile: cloudtrip.homework.client/Dockerfile
+  #   ports:
+  #     - "9090:80"
+  #   depends_on:
+  #     - cloudtrip.homework.server
+
+  cloudtrip.homework.server:
+    container_name: cloudtrip-homework-server
+    image: ${DOCKER_REGISTRY-}cloudtriphomeworkserver
+    build:
+      context: .
+      dockerfile: CloudTrip.Homework.Server/Dockerfile
