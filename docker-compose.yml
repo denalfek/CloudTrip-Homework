@@ -15,3 +15,14 @@ services:
     build:
       context: .
       dockerfile: CloudTrip.Homework.Server/Dockerfile
+
+  mongo:
+    container_name: mongo-db
+    image: mongo:7.0.6
+    ports:
+      - "27017:27017"
+    volumes:
+      - cloudtrip_homework:/data/db
+ 
+volumes:
+  cloudtrip_homework:

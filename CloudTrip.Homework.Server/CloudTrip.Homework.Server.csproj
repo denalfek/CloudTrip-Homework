@@ -21,9 +21,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CloudTrip.Homework.BL\CloudTrip.Homework.BL.csproj" />
     <ProjectReference Include="..\cloudtrip.homework.client\cloudtrip.homework.client.esproj">
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
+    <ProjectReference Include="..\CloudTrip.Homework.Common\CloudTrip.Homework.Common.csproj" />
+    <ProjectReference Include="..\CloudTrip.Homework.Dal.Mongo\CloudTrip.Homework.Dal.Mongo.csproj" />
   </ItemGroup>
 
 </Project>

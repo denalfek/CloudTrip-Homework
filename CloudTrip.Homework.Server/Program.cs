@@ -1,12 +1,18 @@
+using CloudTrip.Homework.BL.Infrastructure;
+using CloudTrip.Homework.Dal.Mongo.Infrastructure;
+
 var builder = WebApplication.CreateBuilder(args);
+var services = builder.Services;
 
 // Add services to the container.
+services.RegisterRepositories(builder.Configuration);
+services.RegisterServices();
 
-builder.Services.AddControllers();
+services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.AddCors(opts =>
+services.AddEndpointsApiExplorer();
+services.AddSwaggerGen();
+services.AddCors(opts =>
 {
     opts.AddPolicy("CorsPolicy",
         policy => policy
