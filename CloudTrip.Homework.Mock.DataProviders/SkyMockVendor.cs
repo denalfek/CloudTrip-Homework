@@ -13,13 +13,15 @@ internal class SkyMockVendor : ISkyMockVendor
     {
         var departure = DateTime.Parse(query.When).AddHours(6);
         var arrival = departure.AddHours(2);
-
+        var rndHours = _random.Next(1, 5);
         var result = new List<SkyMockFlyghtResponse>
         {
             new ("SM987", "SkyMock",
-                new DateTimeOffset(departure).ToUnixTimeSeconds(),
-                new DateTimeOffset(arrival).ToUnixTimeSeconds(),
-                98.76, "B12", "Airbus A320"),
+                DateTime.UtcNow.ToString(),
+                DateTime.UtcNow.AddHours(rndHours).ToString(),
+                "98.76",
+                "B12",
+                "Airbus A320"),
         };
 
         var sec = DateTime.UtcNow.Second;

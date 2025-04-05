@@ -6,8 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\CloudTrip.Homework.DataProviders.Contracts\CloudTrip.Homework.DataProviders.Contracts.csproj" />
-  </ItemGroup>
-
 </Project>
