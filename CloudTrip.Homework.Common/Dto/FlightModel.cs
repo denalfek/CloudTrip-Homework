@@ -2,8 +2,8 @@
 
 public class FlightModel
 {
-    public record GetAvailableFlightQuery(
-        string Origin, string Destination, DateTime DepartureDate);
+    public record SearchCriteria(
+        string Origin, string Destination, DateTime DepartureDate, int Passengers);
 
     public record AvailableFlight(
         string ProviderName,

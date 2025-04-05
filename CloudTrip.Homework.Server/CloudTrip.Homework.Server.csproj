@@ -21,12 +21,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CloudTrip.Homework.Adapters\CloudTrip.Homework.Adapters.csproj" />
     <ProjectReference Include="..\CloudTrip.Homework.BL\CloudTrip.Homework.BL.csproj" />
     <ProjectReference Include="..\cloudtrip.homework.client\cloudtrip.homework.client.esproj">
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
     <ProjectReference Include="..\CloudTrip.Homework.Common\CloudTrip.Homework.Common.csproj" />
     <ProjectReference Include="..\CloudTrip.Homework.Dal.Mongo\CloudTrip.Homework.Dal.Mongo.csproj" />
+    <ProjectReference Include="..\CloudTrip.Homework.Mock.DataProviders\CloudTrip.Homework.Mock.DataProviders.csproj" />
   </ItemGroup>
 
 </Project>

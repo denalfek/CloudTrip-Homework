@@ -10,5 +10,6 @@ public static class ServiceCollectionExtensions
     {
         services.AddTransient<IJwtProvider, JwtProvider>();
         services.AddTransient<IAuthService, AuthService>();
+        services.AddTransient<IFlightService, FlightService>();
     }
 }

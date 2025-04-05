@@ -1,10 +1,18 @@
+using CloudTrip.Homework.Adapters;
 using CloudTrip.Homework.BL.Infrastructure;
+using CloudTrip.Homework.BL.Services;
 using CloudTrip.Homework.Dal.Mongo.Infrastructure;
+using CloudTrip.Homework.Mock.DataProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 
 // Add services to the container.
+
+services.RegisterProviders();
+services.RegisterAdapters();
+services.AddScoped<FlightService>();
+
 services.RegisterRepositories(builder.Configuration);
 services.RegisterServices();
 
