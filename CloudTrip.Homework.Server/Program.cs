@@ -1,6 +1,6 @@
 using CloudTrip.Homework.Adapters;
 using CloudTrip.Homework.BL.Infrastructure;
-using CloudTrip.Homework.BL.Services;
+using CloudTrip.Homework.Caching.Redis;
 using CloudTrip.Homework.Dal.Mongo.Infrastructure;
 using CloudTrip.Homework.Mock.DataProviders;
 
@@ -11,8 +11,7 @@ var services = builder.Services;
 
 services.RegisterProviders();
 services.RegisterAdapters();
-services.AddScoped<FlightService>();
-
+services.RegisterCache();
 services.RegisterRepositories(builder.Configuration);
 services.RegisterServices();
 

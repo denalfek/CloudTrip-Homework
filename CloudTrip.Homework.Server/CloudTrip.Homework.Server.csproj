@@ -23,6 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\CloudTrip.Homework.Adapters\CloudTrip.Homework.Adapters.csproj" />
     <ProjectReference Include="..\CloudTrip.Homework.BL\CloudTrip.Homework.BL.csproj" />
+    <ProjectReference Include="..\CloudTrip.Homework.Caching.Redis\CloudTrip.Homework.Caching.Redis.csproj" />
     <ProjectReference Include="..\cloudtrip.homework.client\cloudtrip.homework.client.esproj">
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
