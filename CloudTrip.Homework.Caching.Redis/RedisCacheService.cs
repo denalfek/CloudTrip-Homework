@@ -5,8 +5,10 @@ using static CloudTrip.Homework.Common.Dto.FlightModel;
 
 namespace CloudTrip.Homework.Caching.Redis;
 
-internal sealed class RedisCacheService(IDatabase redisDb) : IRedisCacheService
+internal sealed class RedisCacheService(IConnectionMultiplexer connectionMultiplexer) : IRedisCacheService
 {
+    private readonly IDatabase _redisDb = connectionMultiplexer.GetDatabase();
+
     private string GetCacheKey(SearchCriteria criteria)
         => $"flights:{criteria.Origin}:{criteria.Destination}:{criteria.DepartureDate:yyyy-MM-dd}:{criteria.Passengers}";
 
@@ -17,13 +19,13 @@ internal sealed class RedisCacheService(IDatabase redisDb) : IRedisCacheService
         var key = GetCacheKey(criteria);
         var serialized = JsonConvert.SerializeObject(flights);
 
-        await redisDb.StringSetAsync(key, serialized);
+        await _redisDb.StringSetAsync(key, serialized);
     }
 
     public async Task<IReadOnlyCollection<AvailableFlight>?> GetCachedFlightsAsync(SearchCriteria criteria)
     {
         var key = GetCacheKey(criteria);
-        var cachedValue = await redisDb.StringGetAsync(key);
+        var cachedValue = await _redisDb.StringGetAsync(key);
 
         if (!cachedValue.HasValue) return default;
 
@@ -35,6 +37,6 @@ internal sealed class RedisCacheService(IDatabase redisDb) : IRedisCacheService
     public async Task InvalidateCacheAsync(SearchCriteria criteria)
     {
         var key = GetCacheKey(criteria);
-        await redisDb.KeyDeleteAsync(key);
+        await _redisDb.KeyDeleteAsync(key);
     }
 }

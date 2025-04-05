@@ -9,8 +9,8 @@ public static class ServiceCollectionExtensions
     public static void RegisterCache(this IServiceCollection services)
     {
         services.AddSingleton<IConnectionMultiplexer>(provider =>
-            ConnectionMultiplexer.Connect("redis:6679"));
+            ConnectionMultiplexer.Connect("redis"));
 
-        services.AddScoped<IRedisCacheService, RedisCacheService>();
+        services.AddTransient<IRedisCacheService, RedisCacheService>();
     }
 }
