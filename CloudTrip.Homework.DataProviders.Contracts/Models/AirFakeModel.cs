@@ -15,5 +15,6 @@ public class AirFakeModel
         string Carrier,
         DateTime TakeoffTime,
         DateTime LandingTime,
-        decimal Price);
+        decimal Price,
+        int StopCount);
 }

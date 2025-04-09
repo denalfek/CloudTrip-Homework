@@ -11,7 +11,8 @@ public class FlightsController(
     ILogger<FlightsController> logger) : ControllerBase
 {
     [HttpGet()]
-    public async Task<ActionResult<IReadOnlyCollection<AvailableFlight>>> Search()
+    public async Task<ActionResult<IReadOnlyCollection<AvailableFlight>>> Search(
+        [FromQuery] SearchCriteria searchCriteria)
     {
         var criteria = new SearchCriteria("", "", DateTime.UtcNow, 1);
         var result = await service.Search(criteria);

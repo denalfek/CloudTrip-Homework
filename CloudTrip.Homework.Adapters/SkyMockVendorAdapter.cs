@@ -17,7 +17,7 @@ internal sealed class SkyMockVendorAdapter(
             criteria.Origin,
             criteria.Destination,
             criteria.DepartureDate.ToString(),
-            criteria.Passengers);
+            criteria.Passengers.Value);
 
         var providerResponse = await skyMockVendor.FindOptionsAsync(query, ct);
         var result = providerResponse

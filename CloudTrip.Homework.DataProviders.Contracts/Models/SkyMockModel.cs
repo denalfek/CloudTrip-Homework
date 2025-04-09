@@ -10,6 +10,7 @@ public class SkyMockModel
         [Required] string When,
         int Passengers);
     
+    // TODO: fix typo
     public record SkyMockFlyghtResponse(
         string Id,
         string Airline,
@@ -17,5 +18,6 @@ public class SkyMockModel
         string ArrivalTime,
         string Cost,
         string Gate,
-        string PlaneModel);
+        string PlaneModel,
+        int StopCount);
 }
