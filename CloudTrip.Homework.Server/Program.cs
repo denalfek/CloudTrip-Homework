@@ -27,7 +27,11 @@ services.AddCors(opts =>
             .AllowAnyMethod()
             .AllowAnyHeader());
 });
+
+LoggingConfigurator.BuildLogger(builder);
+LoggingConfigurator.EnsureTtlIndex();
 var app = builder.Build();
+app.UseMiddleware<RequestLoggingMiddleware>();
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
