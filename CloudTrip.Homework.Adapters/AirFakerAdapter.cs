@@ -17,7 +17,7 @@ internal sealed class AirFakerAdapter
     {
         var query = new AirFakeQuery(
             criteria.Origin, criteria.Destination,
-            criteria.DepartureDate.Value, criteria.Passengers.Value);
+            criteria.DepartureDate, 1);
 
         var providerResponse = await provider.SearchFlightsAsync(query, ct);
         var result = providerResponse

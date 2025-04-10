@@ -5,7 +5,7 @@ using static CloudTrip.Homework.Common.Dto.FlightModel;
 
 namespace CloudTrip.Homework.BL.Services;
 
-public class FlightService(
+public sealed class FlightService(
     IEnumerable<IFlightProvider> providers,
     IRedisCacheService redisCacheService) : IFlightService
 {
@@ -27,4 +27,6 @@ public class FlightService(
 
         return taskResults;
     }
+
+    private Task<IReadOnlyCollection<AvailableFlight> Get()
 }

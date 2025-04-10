@@ -14,8 +14,7 @@ public class FlightsController(
     public async Task<ActionResult<IReadOnlyCollection<AvailableFlight>>> Search(
         [FromQuery] SearchCriteria searchCriteria)
     {
-        var criteria = new SearchCriteria("", "", DateTime.UtcNow, 1);
-        var result = await service.Search(criteria);
+        var result = await service.Search(searchCriteria);
 
         return Ok(result);
     }

@@ -9,7 +9,7 @@ internal sealed class RedisCacheService(IConnectionMultiplexer connectionMultipl
 {
     private readonly IDatabase _redisDb = connectionMultiplexer.GetDatabase();
 
-    private string GetCacheKey(SearchCriteria criteria)
+    private static string GetCacheKey(SearchCriteria criteria)
         => $"flights:{criteria.Origin}:{criteria.Destination}:{criteria.DepartureDate:yyyy-MM-dd}:{criteria.Passengers}";
 
     public async Task CacheFlightsAsync(SearchCriteria criteria, IEnumerable<AvailableFlight> flights)
