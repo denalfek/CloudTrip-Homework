@@ -10,6 +10,10 @@ public class SkyMockModel
         [Required] string When,
         int Passengers);
     
+    //public record SkyMockBookFlightRequest(
+    //    [Required] string Id,
+    //    [Required] int Passengers);
+
     // TODO: fix typo
     public record SkyMockFlyghtResponse(
         string Id,

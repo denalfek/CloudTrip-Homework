@@ -12,9 +12,10 @@ public class FlightsController(
 {
     [HttpGet()]
     public async Task<ActionResult<IReadOnlyCollection<AvailableFlight>>> Search(
-        [FromQuery] SearchCriteria searchCriteria)
+        [FromQuery] SearchCriteria searchCriteria,
+        [FromQuery] SortCriteria sortCriteria)
     {
-        var result = await service.Search(searchCriteria);
+        var result = await service.Search(searchCriteria, sortCriteria);
 
         return Ok(result);
     }

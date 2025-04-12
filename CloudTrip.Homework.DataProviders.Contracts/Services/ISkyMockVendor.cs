@@ -4,7 +4,6 @@ namespace CloudTrip.Homework.DataProviders.Contracts.Services;
 
 public interface ISkyMockVendor
 {
-    Task<IReadOnlyCollection<SkyMockFlyghtResponse>> FindOptionsAsync(
-        SkyMockQuery query,
-        CancellationToken ct = default);
+    Task<IReadOnlyCollection<SkyMockFlyghtResponse>> FindOptionsAsync(CancellationToken ct = default);
+    Task<bool> BookFlight(string id, CancellationToken ct = default);
 }

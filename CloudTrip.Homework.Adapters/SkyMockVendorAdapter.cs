@@ -1,7 +1,6 @@
 ﻿using CloudTrip.Homework.Bl.Adapters.Interfaces;
 using CloudTrip.Homework.DataProviders.Contracts.Services;
 using static CloudTrip.Homework.Common.Dto.FlightModel;
-using static CloudTrip.Homework.DataProviders.Contracts.Models.SkyMockModel;
 
 namespace CloudTrip.Homework.Adapters;
 
@@ -10,16 +9,11 @@ internal sealed class SkyMockVendorAdapter(
 {
     public string ProviderName => "SkyMockVendor";
 
-    public async Task<IReadOnlyCollection<AvailableFlight>> Search(
-        SearchCriteria criteria, CancellationToken ct = default)
-    {
-        var query = new SkyMockQuery(
-            criteria.Origin,
-            criteria.Destination,
-            criteria.DepartureDate.ToString(),
-            0);
+    public Task<bool> Book(string flightId) => skyMockVendor.BookFlight(flightId);
 
-        var providerResponse = await skyMockVendor.FindOptionsAsync(query, ct);
+    public async Task<IReadOnlyCollection<AvailableFlight>> Search(CancellationToken ct = default)
+    {
+        var providerResponse = await skyMockVendor.FindOptionsAsync(ct);
         var result = providerResponse
             .Select(r => new AvailableFlight(
                 ProviderName,
@@ -27,9 +21,10 @@ internal sealed class SkyMockVendorAdapter(
                 r.Airline,
                 DateTime.Parse(r.DepartureTime),
                 DateTime.Parse(r.ArrivalTime),
-                decimal.Parse(r.Cost)))
+                decimal.Parse(r.Cost),
+                r.StopCount))
             .ToArray();
 
         return result;
-    }
+    }    
 }

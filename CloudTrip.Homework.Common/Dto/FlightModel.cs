@@ -1,16 +1,17 @@
-﻿namespace CloudTrip.Homework.Common.Dto;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace CloudTrip.Homework.Common.Dto;
 
 public class FlightModel
 {
     public record SearchCriteria(
-        string Origin,
-        string Destination,
-        DateTime DepartureDate,
+        //string Origin,
+        //string Destination,
+        [Required] string Airline,
+        [Required] DateTime DepartureDate,
         int? Passengers = null,
-        decimal? MinPrice = null,
         decimal? MaxPrice = null,
-        int? MaxStops = null,
-        string? Airline = null);
+        int? MaxStops = null);
 
     public record SortCriteria(
         SortField SortField, bool Accending = true);
@@ -19,7 +20,8 @@ public class FlightModel
         string ProviderName,
         string FlightCode,
         string Airline,
-        DateTime DepartureTime,
+        DateTime DepartureDate,
         DateTime ArrivalTime,
-        decimal Price);
+        decimal Price,
+        int Stops);
 }

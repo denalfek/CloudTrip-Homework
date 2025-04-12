@@ -14,13 +14,23 @@ internal sealed class AirFakerProvider : IAirFakerProvider
     }
 
     public async Task<List<AirFakeResponse>> SearchFlightsAsync(
-        AirFakeQuery request,
         CancellationToken ct = default)
-    {        
-        var delay = _random.Next(50, 550);
+    {
+        var delay = _random.Next(500, 550);
 
         await Task.Delay(delay, ct);
         return _flights;
+    }
+
+    public async Task<bool> BookFlight(string code, CancellationToken ct = default)
+    {
+        var delay = _random.Next(300, 850);
+
+        await Task.Delay(delay, ct);
+
+        if (_flights.Any(f => f.FlightCode == code)) return true;
+
+        return false;
     }
 
     private List<AirFakeResponse> GenerateFakeFlights(int count)

@@ -1,31 +1,25 @@
 ﻿using CloudTrip.Homework.Bl.Adapters.Interfaces;
 using CloudTrip.Homework.DataProviders.Contracts.Services;
-
 using static CloudTrip.Homework.Common.Dto.FlightModel;
-using static CloudTrip.Homework.DataProviders.Contracts.Models.AirFakeModel;
 
 namespace CloudTrip.Homework.Adapters;
 
 internal sealed class AirFakerAdapter
-    (IAirFakerProvider provider): IFlightProvider
+    (IAirFakerProvider provider) : IFlightProvider
 {
     public string ProviderName => "AirFaker";
 
-    public async Task<IReadOnlyCollection<AvailableFlight>> Search(
-        SearchCriteria criteria,
-        CancellationToken ct = default)
+    public async Task<IReadOnlyCollection<AvailableFlight>> Search(CancellationToken ct = default)
     {
-        var query = new AirFakeQuery(
-            criteria.Origin, criteria.Destination,
-            criteria.DepartureDate, 1);
-
-        var providerResponse = await provider.SearchFlightsAsync(query, ct);
+        var providerResponse = await provider.SearchFlightsAsync(ct);
         var result = providerResponse
             .Select(r => new AvailableFlight(
                 ProviderName, r.FlightCode, r.Carrier,
-                r.TakeoffTime, r.LandingTime, r.Price))
+                r.TakeoffTime, r.LandingTime, r.Price, r.StopCount))
             .ToArray();
 
         return result;
     }
+
+    Task<bool> IFlightProvider.Book(string flightId) => provider.BookFlight(flightId);
 }

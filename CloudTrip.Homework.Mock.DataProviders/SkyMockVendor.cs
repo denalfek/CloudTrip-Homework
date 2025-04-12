@@ -13,14 +13,23 @@ internal class SkyMockVendor : ISkyMockVendor
         _flights = GenerateFlights(20);
     }
 
-    public async Task<IReadOnlyCollection<SkyMockFlyghtResponse>> FindOptionsAsync(
-        SkyMockQuery query,
-        CancellationToken ct = default)
+    public async Task<IReadOnlyCollection<SkyMockFlyghtResponse>> FindOptionsAsync(CancellationToken ct = default)
     {
-        var delay = _random.Next(50, 550);
+        var delay = _random.Next(500, 550);
 
         await Task.Delay(delay, ct);
         return _flights;
+    }
+
+    public async Task<bool> BookFlight(string id, CancellationToken ct = default)
+    {
+        var delay = _random.Next(200, 850);
+
+        await Task.Delay(delay, ct);
+
+        if (_flights.Any(f => f.Id == id)) return true;
+
+        return false;
     }
 
     private List<SkyMockFlyghtResponse> GenerateFlights(int count)
@@ -34,16 +43,17 @@ internal class SkyMockVendor : ISkyMockVendor
             var arrivalTime = departureTime.Add(duration);
             var price = (_random.NextDouble() * 300 + 50).ToString("F2");
             var stopCount = _random.Next(0, 3);
+            var seatsCount = _random.Next(3, 40);
 
             result.Add(new SkyMockFlyghtResponse(
-                $"SM{_random.Next(100, 999)}",
-                airlineName,
-                departureTime.ToString("O"),
-                arrivalTime.ToString("O"),
-                price,
-                $"B{_random.Next(1, 30)}",
-                _random.Next(0, 2) == 0 ? "Airbus A320" : "Boeing 737",
-                stopCount
+                Id: $"SM{_random.Next(100, 999)}",
+                Airline: airlineName,
+                DepartureTime: departureTime.ToString("O"),
+                ArrivalTime: arrivalTime.ToString("O"),
+                Cost: price,
+                Gate: $"B{_random.Next(1, 30)}",
+                PlaneModel: _random.Next(0, 2) == 0 ? "Airbus A320" : "Boeing 737",
+                StopCount: stopCount
             ));
         }
 

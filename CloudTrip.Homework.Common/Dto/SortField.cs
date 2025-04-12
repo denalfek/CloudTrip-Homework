@@ -2,7 +2,9 @@
 
 public enum SortField
 {
-    Origin,
-    Destination,
+    Airline,
     DepartureDate,
+    ArrivalTime,
+    Price,
+    Stops
 }

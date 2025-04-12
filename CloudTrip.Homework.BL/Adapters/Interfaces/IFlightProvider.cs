@@ -7,6 +7,7 @@ public interface IFlightProvider
 {
     string ProviderName { get; }
 
-    Task<IReadOnlyCollection<AvailableFlight>> Search(
-        SearchCriteria criteria, CancellationToken ct = default);
+    Task<IReadOnlyCollection<AvailableFlight>> Search(CancellationToken ct = default);
+
+    Task<bool> Book(string flightId);
 }

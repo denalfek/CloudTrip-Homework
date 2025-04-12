@@ -7,7 +7,7 @@ public static class ServiceCollectionExtensions
 {
     public static void RegisterProviders(this IServiceCollection services)
     {
-        services.AddScoped<IAirFakerProvider, AirFakerProvider>();
-        services.AddScoped<ISkyMockVendor, SkyMockVendor>();
+        services.AddSingleton<IAirFakerProvider, AirFakerProvider>();
+        services.AddSingleton<ISkyMockVendor, SkyMockVendor>();
     }
 }

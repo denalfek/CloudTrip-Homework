@@ -8,9 +8,9 @@ namespace CloudTrip.Homework.Caching.Redis;
 internal sealed class RedisCacheService(IConnectionMultiplexer connectionMultiplexer) : IRedisCacheService
 {
     private readonly IDatabase _redisDb = connectionMultiplexer.GetDatabase();
-
+    private readonly TimeSpan _ttl = TimeSpan.FromMinutes(1);
     private static string GetCacheKey(SearchCriteria criteria)
-        => $"flights:{criteria.Origin}:{criteria.Destination}:{criteria.DepartureDate:yyyy-MM-dd}:{criteria.Passengers}";
+        => $"flights:{criteria.Airline}:{criteria.MaxPrice}:{criteria.DepartureDate:yyyy-MM-dd}:{criteria.Passengers}";
 
     public async Task CacheFlightsAsync(SearchCriteria criteria, IEnumerable<AvailableFlight> flights)
     {
@@ -19,7 +19,27 @@ internal sealed class RedisCacheService(IConnectionMultiplexer connectionMultipl
         var key = GetCacheKey(criteria);
         var serialized = JsonConvert.SerializeObject(flights);
 
-        await _redisDb.StringSetAsync(key, serialized);
+        await _redisDb.StringSetAsync(key, serialized, _ttl);
+    }
+
+    public async Task CacheFlightsAsync(string key, IEnumerable<AvailableFlight> flights)
+    {
+        if (!flights.Any()) return;
+
+        var serialized = JsonConvert.SerializeObject(flights);
+
+        await _redisDb.StringSetAsync(key, serialized, _ttl);
+    }
+
+    public async Task<IReadOnlyCollection<AvailableFlight>?> GetCachedFlightsAsync(string key)
+    {
+        var cachedValue = await _redisDb.StringGetAsync(key);
+
+        if (!cachedValue.HasValue) return default;
+
+        var deserialized = JsonConvert.DeserializeObject<AvailableFlight[]>(cachedValue!);
+
+        return deserialized;
     }
 
     public async Task<IReadOnlyCollection<AvailableFlight>?> GetCachedFlightsAsync(SearchCriteria criteria)
