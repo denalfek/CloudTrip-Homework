@@ -1,13 +1,15 @@
 ﻿using CloudTrip.Homework.Bl.Adapters.Interfaces;
 using CloudTrip.Homework.BL.Cache.Interfaces;
 using CloudTrip.Homework.BL.Services.Interfaces;
+using Microsoft.Extensions.Logging;
 using static CloudTrip.Homework.Common.Dto.FlightModel;
 
 namespace CloudTrip.Homework.BL.Services;
 
 public sealed class FlightService(
     IEnumerable<IFlightProvider> providers,
-    IRedisCacheService redisCacheService) : IFlightService
+    IRedisCacheService redisCacheService,
+    ILogger<FlightService> logger) : IFlightService
 {
     public async Task<IReadOnlyCollection<AvailableFlight>> Search(
         SearchCriteria criteria,
@@ -32,6 +34,24 @@ public sealed class FlightService(
 
         var res = SortResults(sortCriteria, FilterResults(criteria, taskResults));
         return res;
+    }
+
+    public Task<bool> Book(string providerName, string flightCode, CancellationToken ct = default)
+    {
+        if (!providers.Any(p => p.ProviderName == providerName))
+        {
+            logger.LogError($"Data provider: {providerName} is not supported");
+            return Task.FromResult(false);
+        }
+
+        var provider = providerName switch
+        {
+            "AirFaker" => providers.First(p => p.ProviderName == providerName),
+            "SkyMockVendor" => providers.First(p => p.ProviderName == providerName),
+            _ => throw new NotImplementedException("Somthing went wrong")
+        };
+
+        return provider.Book(flightCode, ct);
     }
 
     private static AvailableFlight[] SortResults(

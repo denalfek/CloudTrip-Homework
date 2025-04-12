@@ -3,6 +3,9 @@ using CloudTrip.Homework.BL.Infrastructure;
 using CloudTrip.Homework.Caching.Redis;
 using CloudTrip.Homework.Dal.Mongo.Infrastructure;
 using CloudTrip.Homework.Mock.DataProviders;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
@@ -30,6 +33,28 @@ services.AddCors(opts =>
 
 LoggingConfigurator.BuildLogger(builder);
 LoggingConfigurator.EnsureTtlIndex();
+
+string _secret = "Cloud-trip-client-awessome-secret-key";
+string _tokenIssuer = "CloudTrip";
+string _audience = "CloudTripClient";
+
+services.AddAuthentication(opts =>
+{
+    opts.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    opts.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(opts =>
+{
+    opts.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidIssuer = _tokenIssuer,
+        ValidAudience = _audience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secret)),
+        ClockSkew = TimeSpan.Zero,
+    };
+});
 var app = builder.Build();
 app.UseMiddleware<RequestLoggingMiddleware>();
 
@@ -44,7 +69,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
 app.UseCors("CorsPolicy");
 app.MapControllers();

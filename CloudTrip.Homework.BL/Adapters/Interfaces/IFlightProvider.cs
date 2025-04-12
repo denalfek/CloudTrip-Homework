@@ -9,5 +9,5 @@ public interface IFlightProvider
 
     Task<IReadOnlyCollection<AvailableFlight>> Search(CancellationToken ct = default);
 
-    Task<bool> Book(string flightId);
+    Task<bool> Book(string flightId, CancellationToken ct = default);
 }

@@ -26,6 +26,7 @@ internal sealed class JwtProvider : IJwtProvider
         var token = new JwtSecurityToken(
             issuer: _tokenIssuer,
             audience: _audience,
+            claims: claims,
             expires: tokenTtl,
             signingCredentials: credentials);
 

@@ -8,4 +8,6 @@ public interface IFlightService
         SearchCriteria criteria,
         SortCriteria sortCriteria,
         CancellationToken ct = default);
+
+    Task<bool> Book(string providerName, string flightCode, CancellationToken ct = default);
 }

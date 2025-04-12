@@ -5,8 +5,6 @@ namespace CloudTrip.Homework.Common.Dto;
 public class FlightModel
 {
     public record SearchCriteria(
-        //string Origin,
-        //string Destination,
         [Required] string Airline,
         [Required] DateTime DepartureDate,
         int? Passengers = null,
@@ -24,4 +22,8 @@ public class FlightModel
         DateTime ArrivalTime,
         decimal Price,
         int Stops);
+
+    public record Book(
+        [Required] string ProviderName,
+        [Required] string FlightCode);
 }

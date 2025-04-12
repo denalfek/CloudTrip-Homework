@@ -14,12 +14,18 @@ internal sealed class AirFakerAdapter
         var providerResponse = await provider.SearchFlightsAsync(ct);
         var result = providerResponse
             .Select(r => new AvailableFlight(
-                ProviderName, r.FlightCode, r.Carrier,
-                r.TakeoffTime, r.LandingTime, r.Price, r.StopCount))
+                ProviderName,
+                r.FlightCode,
+                r.Carrier,
+                r.TakeoffTime,
+                r.LandingTime,
+                r.Price,
+                r.StopCount))
             .ToArray();
 
         return result;
     }
 
-    Task<bool> IFlightProvider.Book(string flightId) => provider.BookFlight(flightId);
+    public Task<bool> Book(string flightId, CancellationToken ct = default)
+        => provider.BookFlight(flightId, ct);
 }

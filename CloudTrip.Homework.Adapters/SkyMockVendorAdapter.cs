@@ -5,15 +5,13 @@ using static CloudTrip.Homework.Common.Dto.FlightModel;
 namespace CloudTrip.Homework.Adapters;
 
 internal sealed class SkyMockVendorAdapter(
-    ISkyMockVendor skyMockVendor) : IFlightProvider
+    ISkyMockVendor provider) : IFlightProvider
 {
     public string ProviderName => "SkyMockVendor";
 
-    public Task<bool> Book(string flightId) => skyMockVendor.BookFlight(flightId);
-
     public async Task<IReadOnlyCollection<AvailableFlight>> Search(CancellationToken ct = default)
     {
-        var providerResponse = await skyMockVendor.FindOptionsAsync(ct);
+        var providerResponse = await provider.FindOptionsAsync(ct);
         var result = providerResponse
             .Select(r => new AvailableFlight(
                 ProviderName,
@@ -26,5 +24,8 @@ internal sealed class SkyMockVendorAdapter(
             .ToArray();
 
         return result;
-    }    
+    }
+
+    public Task<bool> Book(string flightId, CancellationToken ct = default)
+        => provider.BookFlight(flightId, ct);
 }

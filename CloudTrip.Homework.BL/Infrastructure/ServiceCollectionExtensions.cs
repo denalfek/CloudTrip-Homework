@@ -12,4 +12,9 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IAuthService, AuthService>();
         services.AddTransient<IFlightService, FlightService>();
     }
+
+    public static void Auth(this IServiceCollection services)
+    {
+
+    }
 }
