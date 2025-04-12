@@ -11,6 +11,18 @@ public sealed class FlightService(
     IRedisCacheService redisCacheService,
     ILogger<FlightService> logger) : IFlightService
 {
+    public async Task<IReadOnlyCollection<AvailableFlight>> GetAll(CancellationToken ct = default)
+    {
+        const string cacheKey = "AllVendorsDataKey";
+
+        if (await redisCacheService.GetCachedFlightsAsync(cacheKey) is { } cachedFlights)
+            return cachedFlights;
+
+        var data = await FetchData(ct);
+        CacheData(data, ct);
+        return data;
+    }
+
     public async Task<IReadOnlyCollection<AvailableFlight>> Search(
         SearchCriteria criteria,
         SortCriteria sortCriteria,
@@ -25,33 +37,33 @@ public sealed class FlightService(
             return sorted;
         }
 
-        var searchTasks = providers.Select(p => p.Search(ct));
-
-        var taskResults = (await Task.WhenAll(searchTasks))
-            .SelectMany(x => x).ToArray();
-
-        _ = Task.Run(() => redisCacheService.CacheFlightsAsync(cacheKey, taskResults), ct);
-
-        var res = SortResults(sortCriteria, FilterResults(criteria, taskResults));
-        return res;
+        var data = await FetchData(ct);
+        CacheData(data, ct);
+        return data;
     }
 
-    public Task<bool> Book(string providerName, string flightCode, CancellationToken ct = default)
+    public async Task WarmUpCache(CancellationToken ct = default)
     {
-        if (!providers.Any(p => p.ProviderName == providerName))
+        var data = await FetchData(ct);
+        CacheData(data, ct);
+    }
+
+    public Task<bool> Book(Book book, CancellationToken ct = default)
+    {
+        if (!providers.Any(p => p.ProviderName == book.ProviderName))
         {
-            logger.LogError($"Data provider: {providerName} is not supported");
+            logger.LogError($"Data provider: {book.ProviderName} is not supported");
             return Task.FromResult(false);
         }
 
-        var provider = providerName switch
+        var provider = book.ProviderName switch
         {
-            "AirFaker" => providers.First(p => p.ProviderName == providerName),
-            "SkyMockVendor" => providers.First(p => p.ProviderName == providerName),
+            "AirFaker" => providers.First(p => p.ProviderName == book.ProviderName),
+            "SkyMockVendor" => providers.First(p => p.ProviderName == book.ProviderName),
             _ => throw new NotImplementedException("Somthing went wrong")
         };
 
-        return provider.Book(flightCode, ct);
+        return provider.Book(book.FlightCode, ct);
     }
 
     private static AvailableFlight[] SortResults(
@@ -108,5 +120,51 @@ public sealed class FlightService(
         var result = query.ToArray();
 
         return result;
+    }
+
+    private async Task<AvailableFlight[]> FetchData(CancellationToken ct = default)
+    {
+        var searchTasks = providers.Select(p => SafeCallWithRetries(() => p.Search(ct)));
+        var taskResults = (await Task.WhenAll(searchTasks))
+            .SelectMany(x => x)
+            .ToArray();
+
+        return taskResults;
+    }
+
+    private void CacheData(AvailableFlight[] data, CancellationToken ct = default)
+    {
+        const string cacheKey = "AllVendorsDataKey";
+        _ = Task.Run(() => redisCacheService.CacheFlightsAsync(cacheKey, data), ct);
+    }
+
+    private async Task<T?> SafeCallWithRetries<T>(Func<Task<T>> fetch)
+    {
+        const int maxRetries = 5;
+        int delayBtwnRetriesSec = 3;
+        for (int attempt = 0; attempt <= maxRetries; attempt++)
+        {
+            try
+            {
+                var result = await fetch();
+                return result;
+            }
+            catch (OperationCanceledException ex)
+            {
+                logger.LogError(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.Message);
+            }
+
+            delayBtwnRetriesSec += delayBtwnRetriesSec + attempt;
+            var delay = TimeSpan.FromSeconds(delayBtwnRetriesSec);
+
+            await Task.Delay(delay);
+        }
+
+
+        return default;
     }
 }

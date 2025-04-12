@@ -12,25 +12,36 @@ public class FlightsController(
     IFlightService service,
     ILogger<FlightsController> logger) : ControllerBase
 {
-    [HttpGet()]
+    [HttpGet("all")]
+    [AllowAnonymous]
+    public async Task<ActionResult<IReadOnlyCollection<AvailableFlight>>> GetAll()
+    {
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(1));
+        var result = await service.GetAll(cts.Token);
+        return Ok(result);
+    }
+
+    [HttpGet]
     [AllowAnonymous]
     public async Task<ActionResult<IReadOnlyCollection<AvailableFlight>>> Search(
         [FromQuery] SearchCriteria searchCriteria,
         [FromQuery] SortCriteria sortCriteria)
     {
-        var result = await service.Search(searchCriteria, sortCriteria);
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(1));
+        var result = await service.Search(searchCriteria, sortCriteria, cts.Token);
 
         return Ok(result);
     }
 
     [HttpPost]
-//    [AllowAnonymous]
-    public async Task<IActionResult> Book([FromBody] Book bookRequest)
+    public async Task<IActionResult> Book(
+        [FromBody] Book bookRequest)
     {
         try
         {
+            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(1));
             var bookingResult = await service
-                .Book(bookRequest.ProviderName, bookRequest.FlightCode);
+                .Book(bookRequest, cts.Token);
 
             return bookingResult ? Ok() : BadRequest();
         }

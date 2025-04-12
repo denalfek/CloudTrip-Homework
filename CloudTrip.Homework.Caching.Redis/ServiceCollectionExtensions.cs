@@ -11,6 +11,6 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IConnectionMultiplexer>(provider =>
             ConnectionMultiplexer.Connect("redis"));
 
-        services.AddTransient<IRedisCacheService, RedisCacheService>();
+        services.AddSingleton<IRedisCacheService, RedisCacheService>();
     }
 }

@@ -1,4 +1,5 @@
 ﻿using CloudTrip.Homework.DataProviders.Contracts.Services;
+using System.Collections.Immutable;
 using static CloudTrip.Homework.DataProviders.Contracts.Models.AirFakeModel;
 
 namespace CloudTrip.Homework.Mock.DataProviders;
@@ -6,29 +7,30 @@ namespace CloudTrip.Homework.Mock.DataProviders;
 internal sealed class AirFakerProvider : IAirFakerProvider
 {
     private readonly Random _random = new();
-    private readonly List<AirFakeResponse> _flights;
+    private readonly ImmutableList<AirFakeResponse> _flightsList = [];
 
     public AirFakerProvider()
     {
-        _flights = GenerateFakeFlights(20);
+        var flights = GenerateFakeFlights(20);
+        _flightsList.AddRange(flights);
     }
 
-    public async Task<List<AirFakeResponse>> SearchFlightsAsync(
+    public async Task<IReadOnlyCollection<AirFakeResponse>> SearchFlightsAsync(
         CancellationToken ct = default)
     {
-        var delay = _random.Next(500, 550);
+        var delay = _random.Next(700, 1500);
 
         await Task.Delay(delay, ct);
-        return _flights;
+        return _flightsList;
     }
 
     public async Task<bool> BookFlight(string code, CancellationToken ct = default)
     {
-        var delay = _random.Next(300, 850);
+        var delay = _random.Next(700, 1500);
 
         await Task.Delay(delay, ct);
 
-        if (_flights.Any(f => f.FlightCode == code)) return true;
+        if (_flightsList.Any(f => f.FlightCode == code)) return true;
 
         return false;
     }

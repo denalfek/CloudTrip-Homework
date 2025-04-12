@@ -3,6 +3,7 @@ using CloudTrip.Homework.BL.Infrastructure;
 using CloudTrip.Homework.Caching.Redis;
 using CloudTrip.Homework.Dal.Mongo.Infrastructure;
 using CloudTrip.Homework.Mock.DataProviders;
+using CloudTrip.Homework.Server.Orchestration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -33,6 +34,8 @@ services.AddCors(opts =>
 
 LoggingConfigurator.BuildLogger(builder);
 LoggingConfigurator.EnsureTtlIndex();
+
+services.AddHostedService<CacheWarmupService>();
 
 string _secret = "Cloud-trip-client-awessome-secret-key";
 string _tokenIssuer = "CloudTrip";

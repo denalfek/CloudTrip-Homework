@@ -4,7 +4,7 @@ namespace CloudTrip.Homework.DataProviders.Contracts.Services;
 
 public interface IAirFakerProvider
 {
-    Task<List<AirFakeResponse>> SearchFlightsAsync(CancellationToken ct = default);
+    Task<IReadOnlyCollection<AirFakeResponse>> SearchFlightsAsync(CancellationToken ct = default);
 
     Task<bool> BookFlight(string code, CancellationToken ct = default);
 }

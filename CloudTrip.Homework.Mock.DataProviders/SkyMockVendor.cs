@@ -1,4 +1,5 @@
 ﻿using CloudTrip.Homework.DataProviders.Contracts.Services;
+using System.Collections.Immutable;
 using static CloudTrip.Homework.DataProviders.Contracts.Models.SkyMockModel;
 
 namespace CloudTrip.Homework.Mock.DataProviders;
@@ -6,28 +7,29 @@ namespace CloudTrip.Homework.Mock.DataProviders;
 internal class SkyMockVendor : ISkyMockVendor
 {
     private readonly Random _random = new();
-    private readonly List<SkyMockFlyghtResponse> _flights;
-
+    private readonly ImmutableList<SkyMockFlyghtResponse> _flightsList = [];
     public SkyMockVendor()
     {
-        _flights = GenerateFlights(20);
+        var flights = GenerateFlights(20);
+        _flightsList.AddRange(flights);
     }
 
-    public async Task<IReadOnlyCollection<SkyMockFlyghtResponse>> FindOptionsAsync(CancellationToken ct = default)
+    public async Task<IReadOnlyCollection<SkyMockFlyghtResponse>> FindOptionsAsync(
+        CancellationToken ct = default)
     {
-        var delay = _random.Next(500, 550);
+        var delay = _random.Next(700, 1010);
 
         await Task.Delay(delay, ct);
-        return _flights;
+        return _flightsList;
     }
 
     public async Task<bool> BookFlight(string id, CancellationToken ct = default)
     {
-        var delay = _random.Next(200, 850);
+        var delay = _random.Next(700, 1500);
 
         await Task.Delay(delay, ct);
 
-        if (_flights.Any(f => f.Id == id)) return true;
+        if (_flightsList.Any(f => f.Id == id)) return true;
 
         return false;
     }
