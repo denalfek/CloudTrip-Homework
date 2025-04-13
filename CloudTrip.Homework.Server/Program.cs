@@ -1,5 +1,6 @@
 using CloudTrip.Homework.Adapters;
 using CloudTrip.Homework.BL.Infrastructure;
+using CloudTrip.Homework.BL.Jwt;
 using CloudTrip.Homework.Caching.Redis;
 using CloudTrip.Homework.Dal.Mongo.Infrastructure;
 using CloudTrip.Homework.Mock.DataProviders;
@@ -15,7 +16,7 @@ var services = builder.Services;
 
 services.RegisterProviders();
 services.RegisterAdapters();
-services.RegisterCache();
+services.RegisterCache(builder.Configuration);
 services.RegisterRepositories(builder.Configuration);
 services.RegisterServices();
 
@@ -23,24 +24,25 @@ services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();
+
+var policyName = builder.Configuration.GetValue<string>("CORS:Name")!;
 services.AddCors(opts =>
 {
-    opts.AddPolicy("CorsPolicy",
+    var origins = builder.Configuration.GetValue<string>("CORS:AllowedOrigins")!;
+    opts.AddPolicy(
+        policyName,
         policy => policy
-            .WithOrigins("http://localhost:53072", "http://127.0.0.1:53072", "http://localhost:9090/")
+            .WithOrigins(origins.Split(';'))
             .AllowAnyMethod()
             .AllowAnyHeader());
 });
 
 LoggingConfigurator.BuildLogger(builder);
-LoggingConfigurator.EnsureTtlIndex();
 
 services.AddHostedService<CacheWarmupService>();
 
-string _secret = "Cloud-trip-client-awessome-secret-key";
-string _tokenIssuer = "CloudTrip";
-string _audience = "CloudTripClient";
-
+services.Configure<AuthSettings>(builder.Configuration.GetSection(nameof(AuthSettings)));
+var authSettings = builder.Configuration.GetValue<AuthSettings>(nameof(AuthSettings))!;
 services.AddAuthentication(opts =>
 {
     opts.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -52,12 +54,15 @@ services.AddAuthentication(opts =>
     {
         ValidateIssuer = true,
         ValidateAudience = true,
-        ValidIssuer = _tokenIssuer,
-        ValidAudience = _audience,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secret)),
+        ValidIssuer = authSettings.TokenIssuer,
+        ValidAudience = authSettings.Audience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authSettings.Secret)),
         ClockSkew = TimeSpan.Zero,
     };
 });
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+
 var app = builder.Build();
 app.UseMiddleware<RequestLoggingMiddleware>();
 
@@ -74,7 +79,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseCors("CorsPolicy");
+app.UseCors(policyName);
 app.MapControllers();
 
 app.MapFallbackToFile("/index.html");

@@ -33,4 +33,10 @@
     <ProjectReference Include="..\CloudTrip.Homework.Mock.DataProviders\CloudTrip.Homework.Mock.DataProviders.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="certs\https-cert.pfx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

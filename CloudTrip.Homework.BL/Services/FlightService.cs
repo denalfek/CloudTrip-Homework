@@ -8,7 +8,7 @@ namespace CloudTrip.Homework.BL.Services;
 
 public sealed class FlightService(
     IEnumerable<IFlightProvider> providers,
-    IRedisCacheService redisCacheService,
+    IRedisCacheService redisCacheService,    
     ILogger<FlightService> logger) : IFlightService
 {
     public async Task<IReadOnlyCollection<AvailableFlight>> GetAll(CancellationToken ct = default)
@@ -140,9 +140,9 @@ public sealed class FlightService(
 
     private async Task<T?> SafeCallWithRetries<T>(Func<Task<T>> fetch)
     {
-        const int maxRetries = 5;
-        int delayBtwnRetriesSec = 3;
-        for (int attempt = 0; attempt <= maxRetries; attempt++)
+        const int maxRetries = 3;
+        int delayBtwnRetriesSec = 1;
+        for (int attempt = 1; attempt <= maxRetries; attempt++)
         {
             try
             {
@@ -158,10 +158,12 @@ public sealed class FlightService(
                 logger.LogError(ex.Message);
             }
 
-            delayBtwnRetriesSec += delayBtwnRetriesSec + attempt;
             var delay = TimeSpan.FromSeconds(delayBtwnRetriesSec);
 
             await Task.Delay(delay);
+            delayBtwnRetriesSec += delayBtwnRetriesSec + attempt;
+
+            logger.LogInformation($"Trying to fetch data. Delay is too big. Current attempt: {attempt}");
         }
 
 

@@ -5,10 +5,10 @@ using MongoDB.Driver;
 namespace CloudTrip.Homework.Dal.Mongo.Context;
 
 internal sealed class CloudTripHomeworkDbContext(
-    IMongoClient client
-    /*IOptions<MongoDbSettings> options*/)
+    IMongoClient client,
+    IOptions<MongoDbSettings> options)
 {
-    private readonly IMongoDatabase _db = client.GetDatabase("CloudTrip");
+    private readonly IMongoDatabase _db = client.GetDatabase(options.Value.DbName);
 
     internal IMongoCollection<User> Users => _db.GetCollection<User>(nameof(Users));
 }

@@ -5,10 +5,12 @@ using static CloudTrip.Homework.Common.Dto.FlightModel;
 
 namespace CloudTrip.Homework.Caching.Redis;
 
-internal sealed class RedisCacheService(IConnectionMultiplexer connectionMultiplexer) : IRedisCacheService
+internal sealed class RedisCacheService(
+    IConnectionMultiplexer connectionMultiplexer) : IRedisCacheService
 {
     private readonly IDatabase _redisDb = connectionMultiplexer.GetDatabase();
     private readonly TimeSpan _ttl = TimeSpan.FromMinutes(1);
+
     private static string GetCacheKey(SearchCriteria criteria)
         => $"flights:{criteria.Airline}:{criteria.MaxPrice}:{criteria.DepartureDate:yyyy-MM-dd}:{criteria.Passengers}";
 
