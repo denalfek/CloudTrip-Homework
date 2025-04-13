@@ -50,20 +50,15 @@ internal sealed class FlightService(
 
     public Task<bool> Book(Book book, CancellationToken ct = default)
     {
-        if (!providers.Any(p => p.ProviderName == book.ProviderName))
+        if (providers.FirstOrDefault(p => p.ProviderName == book.ProviderName)
+            is not { } provider)
         {
             logger.LogError($"Data provider: {book.ProviderName} is not supported");
             return Task.FromResult(false);
         }
 
-        var provider = book.ProviderName switch
-        {
-            "AirFaker" => providers.First(p => p.ProviderName == book.ProviderName),
-            "SkyMockVendor" => providers.First(p => p.ProviderName == book.ProviderName),
-            _ => throw new NotImplementedException("Somthing went wrong")
-        };
-
-        return provider.Book(book.FlightCode, ct);
+        var bookResult = provider.Book(book.FlightCode, ct);
+        return bookResult;
     }
 
     private static AvailableFlight[] SortResults(
@@ -151,11 +146,11 @@ internal sealed class FlightService(
             }
             catch (OperationCanceledException ex)
             {
-                logger.LogError(ex.Message);
+                logger.LogError(ex, "Operation canceled exception during provider call");
             }
             catch (Exception ex)
             {
-                logger.LogError(ex.Message);
+                logger.LogError(ex, "Exception during provider call");
             }
 
             var delay = TimeSpan.FromSeconds(delayBtwnRetriesSec);
@@ -165,7 +160,6 @@ internal sealed class FlightService(
 
             logger.LogInformation($"Trying to fetch data. Delay is too big. Current attempt: {attempt}");
         }
-
 
         return default;
     }

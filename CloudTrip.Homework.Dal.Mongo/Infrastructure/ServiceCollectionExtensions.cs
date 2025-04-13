@@ -21,13 +21,13 @@ public static class ServiceCollectionExtensions
         IConfiguration configuration)
     {
         services.Configure<MongoDbSettings>(configuration.GetSection(nameof(MongoDbSettings)));
-        services.AddTransient<CloudTripHomeworkDbContext>();
+        services.AddScoped<CloudTripHomeworkDbContext>();
         services.AddSingleton<IMongoClient>(provider =>
         {
             var conf = provider.GetRequiredService<MongoDbSettings>()!;
             return new MongoClient(conf.ConnectionString);
         });
-        services.AddTransient<IUserRepository, UserRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
     }
 }
 
@@ -54,8 +54,8 @@ public static class LoggingConfigurator
         var client = new MongoClient(connStr);
         var db = client.GetDatabase(dbName);
         var indexKeys = Builders<BsonDocument>.IndexKeys.Ascending("UtcTimestamp");
-        var expirationSeconds = 60;
-        var indexOptions = new CreateIndexOptions { ExpireAfter = TimeSpan.FromSeconds(expirationSeconds) };
+        var expirationDays = 10;
+        var indexOptions = new CreateIndexOptions { ExpireAfter = TimeSpan.FromDays(expirationDays) };
         var indexModel = new CreateIndexModel<BsonDocument>(indexKeys, indexOptions);
         var collection = db.GetCollection<BsonDocument>(collectionName);
         collection.Indexes.CreateOne(indexModel);
@@ -67,8 +67,6 @@ public class RequestLoggingMiddleware(
 {
     public async Task Invoke(HttpContext ctx)
     {
-        logger.LogError("Test error log");
-
         var sw = Stopwatch.StartNew();
 
         await next(ctx);
