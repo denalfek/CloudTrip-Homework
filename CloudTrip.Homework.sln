@@ -33,6 +33,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CloudTrip.Homework.DataProv
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CloudTrip.Homework.Caching.Redis", "CloudTrip.Homework.Caching.Redis\CloudTrip.Homework.Caching.Redis.csproj", "{6751639C-8A66-437B-96B6-654DF25ABCC9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CloudTrip.Homework.Tests", "CloudTrip.Homework.Tests\CloudTrip.Homework.Tests.csproj", "{1F96BC79-AC2F-4370-8ACE-B3981D104E01}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{6AE62A78-5184-42D9-99A8-2D563EAA65F4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +85,10 @@ Global
 		{6751639C-8A66-437B-96B6-654DF25ABCC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6751639C-8A66-437B-96B6-654DF25ABCC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6751639C-8A66-437B-96B6-654DF25ABCC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F96BC79-AC2F-4370-8ACE-B3981D104E01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F96BC79-AC2F-4370-8ACE-B3981D104E01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F96BC79-AC2F-4370-8ACE-B3981D104E01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F96BC79-AC2F-4370-8ACE-B3981D104E01}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -95,6 +103,7 @@ Global
 		{6BA1EC73-9342-47C3-BFED-0CB80221725B} = {F4EBE002-9129-4E26-8E4A-673EACC9D7F5}
 		{3312C7C8-BA89-8E32-661D-C73387F885E6} = {F4EBE002-9129-4E26-8E4A-673EACC9D7F5}
 		{6751639C-8A66-437B-96B6-654DF25ABCC9} = {F4EBE002-9129-4E26-8E4A-673EACC9D7F5}
+		{1F96BC79-AC2F-4370-8ACE-B3981D104E01} = {6AE62A78-5184-42D9-99A8-2D563EAA65F4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {04C9B104-1B53-4215-9AFD-E92C53EF89C3}

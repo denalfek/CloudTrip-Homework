@@ -6,7 +6,7 @@ using static CloudTrip.Homework.Common.Dto.FlightModel;
 
 namespace CloudTrip.Homework.BL.Services;
 
-public sealed class FlightService(
+internal sealed class FlightService(
     IEnumerable<IFlightProvider> providers,
     IRedisCacheService redisCacheService,    
     ILogger<FlightService> logger) : IFlightService

@@ -16,5 +16,8 @@
   <ItemGroup>
     <ProjectReference Include="..\CloudTrip.Homework.Common\CloudTrip.Homework.Common.csproj" />
   </ItemGroup>
+  <ItemGroup>
+  	<InternalsVisibleTo Include="CloudTrip.Homework.Tests" />
+  </ItemGroup>
 
 </Project>
