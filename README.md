@@ -22,60 +22,87 @@ This project is a home assignment, showcasing clean architecture and best practi
 
 ## ✅ Implemented Features
 
-- **Authentication API**  
-  Endpoints for user registration and JWT-based authentication.
+### 🔐 Authentication
+- Simple login/password-based authentication was implemented.
+- Booking endpoints are secured; read-only endpoints are publicly accessible.
+- This design helps separate public data browsing from user-specific actions.
 
-- **Client App (Angular)**  
-  A basic client-side project scaffolded for future development and testing of authentication and data filtering features.
+### 📦 Data Retrieval from Providers
+- Implemented a provider-level integration returning available flight data.
+- All available data is preloaded and shown on the homepage upon client launch.
 
-- **Mocked Flight Providers**  
+### 🔎 Filtered Data Retrieval
+- A dedicated endpoint supports querying flight data using filters (e.g., date, origin, destination).
+
+### 🧠 Caching & Warm-Up
+- Redis-based caching is used to store provider data.
+- On application startup, a warm-up routine fetches and populates cache to improve first-load user experience.
+- This design shows awareness of domain specifics: a flight site without data is meaningless to users.
+
+### 🌐 Provider Simulation
+- Providers are mocked with artificial `Task.Delay()` to simulate slow responses.
+- `CancellationToken` is used throughout the controllers to demonstrate how timeout-aware processing and retry handling would work in real-world scenarios.
+- This models how clients might cancel long-running requests (e.g., in browser apps).
+
+### 🔁 Retry Mechanism
+- A simple retry mechanism is implemented manually.
+- Although in real production HTTP calls we would use `DelegatingHandler` with `Polly`, this implementation was made to showcase understanding of retry mechanics from scratch.
+
+### 🚫 Booking is Not Idempotent
+- The `Book` endpoint is intentionally non-idempotent.
+- No retry logic is applied to booking operations, which would otherwise risk duplicate reservations.
+
+### 🧪 Unit Testing
+- Basic unit tests cover key logic in the booking and data provider services.
+
+### 🗃️ Logging
+- Serilog is configured to write structured logs to a dedicated MongoDB database.
+- A TTL index is configured to automatically purge old logs.
+- Logging is fully asynchronous and records all major service events.
+
+### 💾 Immutable Collections
+- `ImmutableList<T>` is used on the provider level to ensure thread-safety under parallel requests.
+- This demonstrates an understanding of safe concurrent access, even when data isn’t updated in runtime.
+
+### 🧪 Mocked Flight Providers
   Two independent mock providers simulating integration with external flight data systems.  
   Each provider exposes its own models and endpoint structure, mimicking real-world inconsistency between APIs.
 
-- **Result Caching**  
+### ⚡ Result Caching
   In-memory caching using Redis for flight data from providers to improve response times and reduce provider load.  
   *Note:* No distributed lock is currently implemented to manage cache updates in horizontally scaled scenarios.
 
-- **Adapter Pattern**  
+### 🧱 Adapter Pattern
   Adapters are used to normalize and integrate diverse provider response models without forcing a shared contract.
-
-- **Layered Architecture**  
+  
+### 🧩 Layered Architecture
   The system is divided into multiple layers:
   - `Web` – API endpoints and client app.
   - `Application` – Shared DTOs and minimal contracts between layers.
   - `Domain` – Business logic layer.
   - `Infrastructure` – Data access (MongoDB, Redis), provider integrations.
 
-- **Clean Code Practices**  
-  Implementation classes are marked `internal` to encapsulate details and `sealed` to improve runtime performance where inheritance is not needed.
+### 🧼 Clean Code Practices
+  Implementation classes are marked `internal` to encapsulate details and `sealed` to improve runtime performance.
+
+> ⚠️ Although deployment infrastructure is ready, there was not enough time to finalize and publish the live version. This was a demotivating limitation due to time constraints.
 
 ---
 
-## 🔜 Planned Improvements
+## 🔧 Planned Improvements
 
-- **Booking API**  
-  Add functionality to allow authenticated users to book flights.
+- 🔄 **Deployment**: Finalize cloud deployment to expose demo endpoints. Two environments (staging & production) were prepared in advance.
+- 🌐 **Frontend**: Build a simple web frontend for booking/search flow. Not my primary focus, but still valuable for demo completeness.
+- 🧩 **Logging Admin Panel**: Add a basic UI to display logs from MongoDB, especially useful for admin/debugging purposes.
+- ⚙️ **Mongo Config Separation**: Split logging and main databases into separate config sections for clarity and maintainability.
+- 👤 **Admin User Roles**: Introduce a separate user type for accessing admin panels.
 
-- **Client-side Authentication Flow**  
-  Implement login flow and ability to filter/search flights via UI.
-
-- **Logging**  
-  Integrate Serilog for structured, performant logging.
-
-- **CI/CD Pipeline**  
-  Add automated build and deployment processes.
-
-- **Unit testing**  
-  Implement project with tests that covered business logic.
 ---
 
-## 🔎 Notes
+## 🧠 Notes
 
-- **Configuration Management**  
-  Configuration values (e.g., secrets, connection strings) are currently hardcoded for development speed. In production, these should be externalized via configuration files or secret management.
-
-- **Interface Placement**  
-  Interfaces are currently located alongside their consumers (e.g., repositories, services) instead of a dedicated shared layer. This can be improved later for clearer separation of concerns.
-
-- **Scalability Considerations**  
-  Redis caching is in place, but distributed locking and cache invalidation are not yet implemented for scaled environments.
+This implementation emphasizes:
+- Domain awareness (cold starts with no flights = poor UX)
+- Infrastructure readiness (cloud-hosted services, warm cache, logging)
+- Reliability techniques (manual retry, cancellation handling)
+- Clean code and testability
