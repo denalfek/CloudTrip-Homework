@@ -97,6 +97,13 @@ This project is a home assignment, showcasing clean architecture and best practi
 - ⚙️ **Mongo Config Separation**: Split logging and main databases into separate config sections for clarity and maintainability.
 - 👤 **Admin User Roles**: Introduce a separate user type for accessing admin panels.
 
+  ### ⚠️ Known Issues
+
+  - ❌ Missing DTO for clearly representing errors when a booking operation fails.
+  - 🚫 Missing DTO to display an error message when a user attempts to register with an already existing login.
+  - 🐢 Swagger UI exhibits significant startup delay; the root cause has not been identified yet.
+  - 🐞 Logging behavior is currently unstable — log entries are intermittently missing, and there is no opportunity to investigate the issue at this stage.
+
 ---
 
 ## 🧠 Notes
