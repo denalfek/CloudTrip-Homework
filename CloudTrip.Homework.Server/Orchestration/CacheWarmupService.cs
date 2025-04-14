@@ -14,7 +14,6 @@ public class CacheWarmupService(
         var flightService = scope.ServiceProvider.GetRequiredService<IFlightService>();
 
         await flightService.WarmUpCache(ct);
-        logger.LogInformation("Cache initialization successfully finished");
     }
 
     public Task StopAsync(CancellationToken cancellationToken)

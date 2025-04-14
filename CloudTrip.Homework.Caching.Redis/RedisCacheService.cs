@@ -1,4 +1,5 @@
 ﻿using CloudTrip.Homework.BL.Cache.Interfaces;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 using static CloudTrip.Homework.Common.Dto.FlightModel;
@@ -6,7 +7,8 @@ using static CloudTrip.Homework.Common.Dto.FlightModel;
 namespace CloudTrip.Homework.Caching.Redis;
 
 internal sealed class RedisCacheService(
-    IConnectionMultiplexer connectionMultiplexer) : IRedisCacheService
+    IConnectionMultiplexer connectionMultiplexer,
+    ILogger<RedisCacheService> logger) : IRedisCacheService
 {
     private readonly IDatabase _redisDb = connectionMultiplexer.GetDatabase();
     private readonly TimeSpan _ttl = TimeSpan.FromMinutes(1);
@@ -26,11 +28,23 @@ internal sealed class RedisCacheService(
 
     public async Task CacheFlightsAsync(string key, IEnumerable<AvailableFlight> flights)
     {
-        if (!flights.Any()) return;
+        if (!flights.Any())
+        {
+            logger.LogInformation("Nothing to cache");
+            return;
+        }
 
-        var serialized = JsonConvert.SerializeObject(flights);
+        try
+        {
+            var serialized = JsonConvert.SerializeObject(flights);
 
-        await _redisDb.StringSetAsync(key, serialized, _ttl);
+            await _redisDb.StringSetAsync(key, serialized, _ttl);
+            logger.LogInformation("Data was cached successfully");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, $"Issues with caching data. Key: {key}");
+        }
     }
 
     public async Task<IReadOnlyCollection<AvailableFlight>?> GetCachedFlightsAsync(string key)

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using Serilog;
@@ -24,7 +25,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<CloudTripHomeworkDbContext>();
         services.AddSingleton<IMongoClient>(provider =>
         {
-            var conf = provider.GetRequiredService<MongoDbSettings>()!;
+            var conf = provider.GetRequiredService<IOptions<MongoDbSettings>>().Value;
             return new MongoClient(conf.ConnectionString);
         });
         services.AddScoped<IUserRepository, UserRepository>();

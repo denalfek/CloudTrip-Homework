@@ -12,7 +12,7 @@ internal sealed class AirFakerProvider : IAirFakerProvider
     public AirFakerProvider()
     {
         var flights = GenerateFakeFlights(20);
-        _flightsList.AddRange(flights);
+        _flightsList = [.. flights];
     }
 
     public async Task<IReadOnlyCollection<AirFakeResponse>> SearchFlightsAsync(

@@ -2,7 +2,7 @@
 
 internal sealed class MongoDbSettings
 {
-    public required string DbName { get; set; }
+    public required string MainDbName { get; set; }
 
     public required string LogsDbName { get; set; }
 

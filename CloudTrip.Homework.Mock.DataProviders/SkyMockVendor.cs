@@ -11,7 +11,7 @@ internal class SkyMockVendor : ISkyMockVendor
     public SkyMockVendor()
     {
         var flights = GenerateFlights(20);
-        _flightsList.AddRange(flights);
+        _flightsList = [..flights];
     }
 
     public async Task<IReadOnlyCollection<SkyMockFlyghtResponse>> FindOptionsAsync(

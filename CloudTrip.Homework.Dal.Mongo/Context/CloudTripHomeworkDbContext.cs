@@ -8,7 +8,7 @@ internal sealed class CloudTripHomeworkDbContext(
     IMongoClient client,
     IOptions<MongoDbSettings> options)
 {
-    private readonly IMongoDatabase _db = client.GetDatabase(options.Value.DbName);
+    private readonly IMongoDatabase _db = client.GetDatabase(options.Value.MainDbName);
 
     internal IMongoCollection<User> Users => _db.GetCollection<User>(nameof(Users));
 }

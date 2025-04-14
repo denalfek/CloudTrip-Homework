@@ -42,7 +42,7 @@ LoggingConfigurator.BuildLogger(builder);
 services.AddHostedService<CacheWarmupService>();
 
 services.Configure<AuthSettings>(builder.Configuration.GetSection(nameof(AuthSettings)));
-var authSettings = builder.Configuration.GetValue<AuthSettings>(nameof(AuthSettings))!;
+var authSettings = builder.Configuration.GetSection(nameof(AuthSettings)).Get<AuthSettings>()!;
 services.AddAuthentication(opts =>
 {
     opts.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -60,14 +60,12 @@ services.AddAuthentication(opts =>
         ClockSkew = TimeSpan.Zero,
     };
 });
-var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
-builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
 var app = builder.Build();
 app.UseMiddleware<RequestLoggingMiddleware>();
 
-app.UseDefaultFiles();
-app.UseStaticFiles();
+//app.UseDefaultFiles();
+//app.UseStaticFiles();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
